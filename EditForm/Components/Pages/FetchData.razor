@@ -1,0 +1,65 @@
+﻿@page "/fetchdata"
+@using EditForm.Services
+@using EditForm.Data
+@inject WeatherForecastService ForecastService
+
+@if (loaded)
+{
+    <h1>Weather forecast</h1>
+
+    <input type="number" width="2" min="0" max="@upperIndex" @onchange="ChangeForecast" value="@index" />
+
+    <EditForm Model=@currentForecast>
+        <InputDate @bind-Value=currentForecast.Date></InputDate>
+        <InputNumber @bind-Value=currentForecast.TemperatureC></InputNumber>
+        <InputText @bind-Value=currentForecast.Summary></InputText>
+    </EditForm>
+
+}
+@code {
+    private WeatherForecast[] forecasts;
+    private WeatherForecast currentForecast;
+    private int index = 0;
+    private int upperIndex = 0;
+    private bool loaded = false;
+    // public override async Task SetParametersAsync(ParameterView parameters)
+    // {
+    //     if (parameters.TryGetValue<string>(nameof(Param), out var value))
+    //     {
+    //         if (value is null)
+    //         {
+    //             message = "The value of 'Param' is null.";
+    //         }
+    //         else
+    //         {
+    //             message = $"The value of 'Param' is {value}.";
+    //         }
+    //     }
+
+    //     await base.SetParametersAsync(parameters);
+    // }
+    // protected override async Task SetParametersAsync()
+    // {
+    //     forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    //     currentForecast = forecasts[index];
+    //     upperIndex = forecasts.Count() - 1;
+    //     await base.SetParametersAsync(ParameterView.Empty);
+    // }
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        currentForecast = forecasts[index];
+        upperIndex = forecasts.Count() - 1;
+        loaded = true;
+    }
+
+    private async Task ChangeForecast(ChangeEventArgs e)
+    {
+        index = int.Parse(e.Value as string);
+        if (index <= upperIndex && index >= 0)
+        {
+            currentForecast = forecasts[index];
+        }
+    }
+}

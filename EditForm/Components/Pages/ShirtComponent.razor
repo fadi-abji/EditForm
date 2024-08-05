@@ -1,0 +1,101 @@
+﻿@page "/shirt"
+
+
+<EditForm Model="@shirt" OnSubmit="ValidateData">
+    <label>
+        <h3>Size</h3>
+        <InputRadioGroup Name="size" @bind-Value=shirt.Size>
+            @foreach (var shirtSize in Enum.GetValues(typeof(ShirtSize)))
+            {
+                <label>
+                    @shirtSize:
+                    <InputRadio Name="size" Value="@shirtSize"></InputRadio>
+                </label>
+                <br />
+            }
+        </InputRadioGroup>
+    </label>
+    <p></p>
+    <label>
+        <h3>Color</h3>
+        <InputRadioGroup Name="color" @bind-Value=shirt.Color>
+            @foreach (var shirtColor in Enum.GetValues(typeof(ShirtColor)))
+            {
+                <label>
+                    @shirtColor:
+                    <InputRadio Name="color" Value="@shirtColor"></InputRadio>
+                </label>
+                <br />
+            }
+        </InputRadioGroup>
+    </label>
+    <p></p>
+    <label>
+        <h3>Price</h3>
+        <InputNumber @bind-Value=shirt.Price min="0" max="100" step="0.01"></InputNumber>
+    </label>
+    <input type="submit" class="btn btn-primary" value="Save" />
+    <p></p>
+    <div>@Message</div>
+</EditForm>
+
+@code {
+
+    private string Message = String.Empty;
+
+    private Shirt shirt = new Shirt
+        {
+            Size = ShirtSize.Large,
+            Color = ShirtColor.Blue,
+            Price = 9.99M
+        };
+
+
+    private async Task ValidateData(EditContext editContext)
+    {
+        if (editContext.Model is not Shirt shirt)
+        {
+            Message = "T-Shirt object is invalid";
+            return;
+        }
+
+        if (shirt is { Color: ShirtColor.Red, Size: ShirtSize.ExtraLarge })
+        {
+            Message = "Red T-Shirts not available in Extra Large size";
+            return;
+        }
+
+        if (shirt is { Color: ShirtColor.Blue, Size: <= ShirtSize.Medium })
+        {
+            Message = "Blue T-Shirts not available in Small or Medium sizes";
+            return;
+        }
+
+        if (shirt is { Color: ShirtColor.White, Price: > 50 })
+        {
+            Message = "White T-Shirts must be priced at 50 or lower";
+            return;
+        }
+
+        // Data is valid
+        // Save the data
+        Message = "Changes saved";
+    }
+
+    public enum ShirtColor
+    {
+        Red, Blue, Yellow, Green, Black, White
+    };
+
+    public enum ShirtSize
+    {
+        Small, Medium, Large, ExtraLarge
+    };
+
+    public class Shirt
+    {
+        public ShirtColor Color { get; set; }
+        public ShirtSize Size { get; set; }
+        public decimal Price;
+    }
+}
