@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Learn.Components" Version="0.1.0-alpha1" />
+  </ItemGroup>
+
 </Project>
