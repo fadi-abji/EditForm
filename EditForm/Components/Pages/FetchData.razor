@@ -3,7 +3,12 @@
 @using EditForm.Data
 @inject WeatherForecastService ForecastService
 
-@if (loaded)
+
+@if (currentForecast == null)
+{
+    <p>Loading...</p>
+}
+else
 {
     <h1>Weather forecast</h1>
 
@@ -16,42 +21,19 @@
     </EditForm>
 
 }
+
 @code {
     private WeatherForecast[] forecasts;
     private WeatherForecast currentForecast;
     private int index = 0;
     private int upperIndex = 0;
-    private bool loaded = false;
-    // public override async Task SetParametersAsync(ParameterView parameters)
-    // {
-    //     if (parameters.TryGetValue<string>(nameof(Param), out var value))
-    //     {
-    //         if (value is null)
-    //         {
-    //             message = "The value of 'Param' is null.";
-    //         }
-    //         else
-    //         {
-    //             message = $"The value of 'Param' is {value}.";
-    //         }
-    //     }
 
-    //     await base.SetParametersAsync(parameters);
-    // }
-    // protected override async Task SetParametersAsync()
-    // {
-    //     forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-    //     currentForecast = forecasts[index];
-    //     upperIndex = forecasts.Count() - 1;
-    //     await base.SetParametersAsync(ParameterView.Empty);
-    // }
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
         currentForecast = forecasts[index];
         upperIndex = forecasts.Count() - 1;
-        loaded = true;
     }
 
     private async Task ChangeForecast(ChangeEventArgs e)
